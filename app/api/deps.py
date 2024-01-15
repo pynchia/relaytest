@@ -12,11 +12,11 @@ async def get_db() -> Session:
     """
     Dependency function that yields db sessions
     """
-    async with Session(engine) as session:
+    with Session(engine) as session:
         try:
             yield session
-            await session.commit()  # TODO remove or use autocommit instead
+            session.commit()  # TODO remove or use autocommit instead
         except SQLAlchemyError:
             logger.error("Transaction failed, rolling back")
-            await session.rollback()
+            session.rollback()
             raise
