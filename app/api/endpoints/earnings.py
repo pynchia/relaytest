@@ -26,7 +26,7 @@ async def calculate_earnings(
     Calculate earnings given an activity log
     """
     try:
-        request_id = uuid.uuid1()
+        request_id = str(uuid.uuid1())
         await activity.add_log(db, request_id, activity_log)
         return await earnings.calc_earnings(request_id, rate_card_id)
     except SQLAlchemyError as err:

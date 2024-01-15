@@ -1,4 +1,3 @@
-import uuid
 
 from sqlalchemy.sql import text
 from sqlmodel import Session
@@ -8,14 +7,15 @@ from app import models
 
 
 class CRUDActivity:
-    async def add_log(db: Session, request_id: uuid.UUID, activity_log: list[models.Activity]):
+    @staticmethod
+    async def add_log(db: Session, request_id: str, activity_log: list[models.Activity]):
         ins_query = """
-            INSERT INTO public.activity (request_id, route_id, attempt_date_time, success)
+            INSERT INTO activity (request_id, route_id, attempt_date_time, success)
             VALUES (:request_id, :route_id, :attempt_date_time, :success)
         """
         db.exec(
             text(ins_query),
-            [
+            params=[
                 {
                     'request_id': request_id,
                     'route_id': ac.route_id,
