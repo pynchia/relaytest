@@ -6,7 +6,8 @@ from sqlmodel import Session
 
 from app.api.deps import get_db
 from app import models, schemas
-from app.crud import activity, earnings, Tiers
+from app.crud import activity, earnings
+from app.tiers import Tiers
 
 
 router = APIRouter()

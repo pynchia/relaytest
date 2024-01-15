@@ -1,7 +1,7 @@
 import uuid
 
 from app import models, schemas
-from app.crud import Tiers
+from app.tiers import Tiers
 
 
 class CRUDEarnings:
