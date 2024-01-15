@@ -20,7 +20,7 @@ router = APIRouter()
 )
 async def calculate_earnings(
     *, db: Session = Depends(get_db), rate_card_id:Tiers, activity_log: list[models.Activity]
-) -> models.Activity:
+) -> schemas.Earnings:
     """
     Calculate earnings given an activity log
     """
