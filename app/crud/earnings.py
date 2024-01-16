@@ -22,9 +22,26 @@ class BronzeEarnings:
             .where(Activity.request_id==request_id)
             .where(Activity.success==True)
         ).one()
+        num_unsuccessful_activities = db.exec(
+            select(func.count(Activity.id))
+            .where(Activity.request_id==request_id)
+            .where(Activity.success==False)
+        ).one()
 
         return Earnings(
             line_items=[
+                LineItem(
+                    name='Per successful attempt',
+                    quantity=num_successful_activities,
+                    rate=self.PER_SUCCESSFUL_ATTEMPT,
+                    total=float(num_successful_activities)*self.PER_SUCCESSFUL_ATTEMPT
+                ),
+                LineItem(
+                    name='Per unsuccessful attempt',
+                    quantity=num_unsuccessful_activities,
+                    rate=self.PER_UNSUCCESSFUL_ATTEMPT,
+                    total=float(num_unsuccessful_activities)*self.PER_SUCCESSFUL_ATTEMPT
+                ),
                 LineItem(
                     name='Long route bonus',
                     quantity=num_successful_activities,
