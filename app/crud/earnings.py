@@ -1,5 +1,7 @@
 
 from sqlalchemy import func
+from sqlalchemy.sql import text
+
 from sqlmodel import Session, select
 
 from app.schemas import Earnings, LineItem
@@ -11,7 +13,7 @@ class BronzeEarnings:
     PER_SUCCESSFUL_ATTEMPT = 0.459
     PER_UNSUCCESSFUL_ATTEMPT = 0.229
     LONG_ROUTE_BONUS = 10.0
-    LOYALTY_BONUS = 20.0
+    LOYALTY_BONUS_ROUTES = 20.0
 
     def __init__(self):
         self.hourly_min_earnings = 14.50
@@ -22,11 +24,38 @@ class BronzeEarnings:
             .where(Activity.request_id==request_id)
             .where(Activity.success==True)
         ).one()
+
         num_unsuccessful_activities = db.exec(
             select(func.count(Activity.id))
             .where(Activity.request_id==request_id)
             .where(Activity.success==False)
         ).one()
+
+        long_route_query = """
+            SELECT route_id, count(id) as num
+            FROM activity
+            WHERE request_id = :request_id AND success = True
+            GROUP BY route_id
+            ORDER BY num DESC
+        """
+        longest_route_id, longest_route_num_drops = db.exec(
+            text(long_route_query),
+            params={
+                'request_id': request_id,
+            }
+        ).first()
+
+        num_distinct_routes_query = """
+            SELECT count(DISTINCT route_id)
+            FROM activity
+            WHERE request_id = :request_id
+        """
+        num_distinct_routes, *_ = db.exec(
+            text(num_distinct_routes_query),
+            params={
+                'request_id': request_id,
+            }
+        ).first()
 
         return Earnings(
             line_items=[
@@ -44,9 +73,15 @@ class BronzeEarnings:
                 ),
                 LineItem(
                     name='Long route bonus',
-                    quantity=num_successful_activities,
+                    quantity=1 if longest_route_num_drops>30 else 0,
                     rate=self.LONG_ROUTE_BONUS,
-                    total=float(num_successful_activities)*self.LONG_ROUTE_BONUS if num_successful_activities>30 else 0.0
+                    total=self.LONG_ROUTE_BONUS if longest_route_num_drops>30 else 0.0
+                ),
+                LineItem(
+                    name='Loyalty bonus (routes)',
+                    quantity=1 if num_distinct_routes>=10 else 0,
+                    rate=self.LOYALTY_BONUS_ROUTES,
+                    total=self.LOYALTY_BONUS_ROUTES if num_distinct_routes>=10 else 0.0
                 ),
             ]
         )
