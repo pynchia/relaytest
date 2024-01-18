@@ -16,7 +16,6 @@ The code is available on Github at:
 https://github.com/pynchia/relaytest
 
 
-
 ## Notes
 
 The following notes have a fundamental reason: lack of time.
@@ -40,4 +39,8 @@ The following notes have a fundamental reason: lack of time.
 
 - The application is not containerised, no Dockerfile, although it would be rather simple to add.
 
-- Also CI github actions that run the tests could be added easily. And/or to a dockerfile.
+- The code gets deployed to Render.com automatically upon every push to the `main` branch.
+
+- Also CI github actions that run the tests and guard deployment could be added easily. And/or to a dockerfile, depending on how one wants to play it
+
+
