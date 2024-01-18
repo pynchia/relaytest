@@ -16,6 +16,17 @@ The code is available on Github at:
 https://github.com/pynchia/relaytest
 
 
+## Tests
+
+the unit tests can be launched in the root directory of the project by:
+
+- activating the virtual environment and running `pytest`
+
+or
+
+- by running `pdm run pytest`
+
+
 ## Notes
 
 The following notes have a fundamental reason: lack of time.
