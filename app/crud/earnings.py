@@ -86,7 +86,10 @@ class BronzeEarnings:
             ]
         )
 
+# TODO implement the earnings for the remaining tiers
+# Note: the main class is defined at the end of this module
 
+    
 # class SilverEarnings:
 #     SILVER_PER_SUCCESSFUL_ATTEMPT = 0.459
 #     SILVER_PER_UNSUCCESSFUL_ATTEMPT = 0.229
@@ -113,10 +116,10 @@ class BronzeEarnings:
 
 
 # class GoldEarnings:
-#     SILVER_PER_SUCCESSFUL_ATTEMPT = 0.459
-#     SILVER_PER_UNSUCCESSFUL_ATTEMPT = 0.229
-#     SILVER_LONG_ROUTE_BONUS = 10.0
-#     SILVER_LOYALTY_BONUS = 20.0
+#     GOLD_PER_SUCCESSFUL_ATTEMPT = 0.459
+#     GOLD_PER_UNSUCCESSFUL_ATTEMPT = 0.229
+#     GOLD_LONG_ROUTE_BONUS = 10.0
+#     GOLD_LOYALTY_BONUS = 20.0
 
 #     def __init__(self):
 #         self.hourly_min_earnings = 15.0
@@ -138,10 +141,10 @@ class BronzeEarnings:
 
 
 # class PlatinumEarnings:
-#     SILVER_PER_SUCCESSFUL_ATTEMPT = 0.459
-#     SILVER_PER_UNSUCCESSFUL_ATTEMPT = 0.229
-#     SILVER_LONG_ROUTE_BONUS = 10.0
-#     SILVER_LOYALTY_BONUS = 20.0
+#     PLATINUM_PER_SUCCESSFUL_ATTEMPT = 0.459
+#     PLATINUM_PER_UNSUCCESSFUL_ATTEMPT = 0.229
+#     PLATINUM_LONG_ROUTE_BONUS = 10.0
+#     PLATINUM_LOYALTY_BONUS = 20.0
 
 #     def __init__(self):
 #         self.hourly_min_earnings = 15.25
@@ -164,19 +167,21 @@ class BronzeEarnings:
 
 class CRUDEarnings:
     def __init__(self):
+        # use composition for each tier
         self.bronze_tier = BronzeEarnings()
         # self.silver_tier = SilverEarnings()
         # self.gold_tier = GoldEarnings()
         # self.platinum_tier = PlatinumEarnings()
 
     async def calc_earnings(self, db: Session, request_id: str, tier:Tiers) -> Earnings:
-        tier_instance = getattr(self, tier)
-        earnings = await tier_instance.calc_earnings(db, request_id)  # find the instance for the calculation by name convention
+        tier_instance = getattr(self, tier)  # find the instance for the calculation by name convention
+        earnings = await tier_instance.calc_earnings(db, request_id)
         # now add the common attrs
         earnings.hours_worked = 12
         earnings.minimum_earnings = tier_instance.hourly_min_earnings*earnings.hours_worked
         earnings.final_earnings = earnings.line_items_subtotal + earnings.minimum_earnings
+
         return earnings
-    
+   
 
 earnings = CRUDEarnings()

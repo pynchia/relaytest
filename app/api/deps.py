@@ -15,7 +15,7 @@ async def get_db() -> Session:
     with Session(engine) as session:
         try:
             yield session
-            session.commit()  # TODO remove or use autocommit instead
+            # session.commit()  # TODO remove or use autocommit instead
         except SQLAlchemyError:
             logger.error("Transaction failed, rolling back")
             session.rollback()

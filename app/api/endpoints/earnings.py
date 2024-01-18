@@ -28,7 +28,9 @@ async def calculate_earnings(
     try:
         request_id = str(uuid.uuid1())
         await activity.add_log(db, request_id, activity_log)
-        return await earnings.calc_earnings(db, request_id, rate_card_id)
+        result_earnings = await earnings.calc_earnings(db, request_id, rate_card_id)
+        await activity.delete_log(db, request_id)
+        return result_earnings
     except SQLAlchemyError as err:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(err.__dict__['orig'])
