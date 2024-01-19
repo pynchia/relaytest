@@ -43,7 +43,7 @@ or
 
 the application can be run locally with the command
 
-`uvicorn app.main:app` with the python vevn activated
+`uvicorn app.main:app` with the python venv activated
 
 or
 
